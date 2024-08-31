@@ -7,7 +7,7 @@ namespace eTranscript.Services.Interfaces
     public interface IOrderManagement
     { 
 
-        Task<Response> CreateOrderAsync(Commodity model); //  1
+        Task<Response> CreateOrderAsync(string CustomerId, Commodity model); //  1
                                                          
         Task<Response> CreateOrderDetailByCommodityAsync(string orderNumber, Commodity model); //  2
         Task<Response> AddShipmentToOrderDetailAsync(string OrderNumber, Shipment model); //  3
