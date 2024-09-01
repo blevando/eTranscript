@@ -29,5 +29,10 @@
 
 
         }
+
+        internal static string GetInvoiceNumber()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -4,6 +4,9 @@ using eTranscript.Models.DomainModels;
 using eTranscript.Models.EntityModels;
 using eTranscript.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics.CodeAnalysis;
+using System.Reflection.Metadata;
 
 namespace eTranscript.Services.Repositories
 {
@@ -26,7 +29,7 @@ namespace eTranscript.Services.Repositories
             Response response = new Response();
             try
             {
-                if (model.Count>0)
+                if (model.Count > 0)
                 {
                     // Delete the existing shipment Items in the OrderDetail Table
 
@@ -40,7 +43,7 @@ namespace eTranscript.Services.Repositories
 
                     // Then Add all items in the model collection above
 
-                  List<OrderDetail> orderDetails = new List<OrderDetail>();
+                    List<OrderDetail> orderDetails = new List<OrderDetail>();
 
                     foreach (ShipmentDto item in model)
                     {
@@ -49,18 +52,18 @@ namespace eTranscript.Services.Repositories
                         detail.Price = item.Price;
                         detail.Item = item.Name;
                         detail.OrderItemType = OrderItemType.Shipment;
-                        orderDetails.Add(detail);                        
+                        orderDetails.Add(detail);
 
                     }
                     // Add the list of OrderDetail objects to the context
-                   await _context.OrderDetail.AddRangeAsync(orderDetails);
+                    await _context.OrderDetail.AddRangeAsync(orderDetails);
 
                     // Save changes to the database
                     await _context.SaveChangesAsync();
 
                     response.Message = "Shipment Items inserted";
                     response.Code = 200;
-                    response.Data = model.Count;                   
+                    response.Data = model.Count;
 
                 }
                 else
@@ -69,7 +72,7 @@ namespace eTranscript.Services.Repositories
                     response.Code = 201;
                     response.Data = model.Count;
                 }
-                 return response;
+                return response;
             }
             catch (DbUpdateException dbEx)
             {
@@ -89,9 +92,84 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
-        public Task<Response> CreateInvoiceAsync(string OrderNumber)
+        public async Task<Response> CreateInvoiceAsync(string OrderNumber)
         {
-            throw new NotImplementedException();
+            Response response = new Response();
+            try
+            {
+                // decimal totalUnitPrice = await _context.OrderDetail.Sum(od => od.Price && od.OrderNumber == OrderNumber);
+
+                //  decimal totalUnitPriceForOrder = _context.OrderDetail.Where(od => od.OrderNumber == OrderNumber).Sum(od => od.Price);
+
+                decimal documentSubtotal = _context.OrderDetail.Where(od => od.OrderNumber == OrderNumber && od.OrderItemType == OrderItemType.Document).Sum(od => od.Price);
+
+                decimal shippingSubtotal = _context.OrderDetail.Where(od => od.OrderNumber == OrderNumber && od.OrderItemType == OrderItemType.Shipment).Sum(od => od.Price);
+
+                decimal taxAmount = _context.OrderDetail.Where(od => od.OrderNumber == OrderNumber).Sum(od => od.Price);
+
+                decimal totalAmount = documentSubtotal + shippingSubtotal;
+
+                //Does it exist? 
+                // NO: Insert
+                // YES: Update
+
+                //var existingInvoice = await _context.OrderDetail.AnyAsync(c => c.OrderNumber == OrderNumber);
+                var existingInvoice = await _context.Invoice.FirstOrDefaultAsync(c => c.OrderNumber == OrderNumber);
+
+                if (existingInvoice != null)
+                {
+                    // xists - Just update
+                    existingInvoice.TotalAmount = totalAmount;
+                    existingInvoice.TaxAmount = taxAmount;
+                    existingInvoice.DocumentSubTotal = documentSubtotal;
+                    existingInvoice.ShippmentSubtotal = shippingSubtotal;
+
+                    _context.Entry(existingInvoice).State = EntityState.Modified;
+                 //   _context.Invoice.Update(existingInvoice);
+
+                    response.Message = "Invoice already exists";
+                    response.Code = 200;
+                    response.Data = existingInvoice;
+                }
+                else
+                {
+                    Invoice invoice = new Invoice();
+                    invoice.OrderNumber = OrderNumber;
+                    invoice.InvoiceNumber = CommonUtility.GetInvoiceNumber();
+                    invoice.TotalAmount = totalAmount;
+                    invoice.TaxAmount = taxAmount;
+                    invoice.DocumentSubTotal = documentSubtotal;
+                    invoice.ShippmentSubtotal = shippingSubtotal;
+                    invoice.Status = 0; // pending payment
+                    await _context.Invoice.AddAsync(invoice);
+
+                    response.Message = "Invoice Created Successfully";
+                    response.Code = 200;
+                    response.Data = invoice;
+
+                    // it is new - just insert
+                }
+
+                await _context.SaveChangesAsync();
+
+            }
+            catch (DbUpdateException dbEx)
+            {
+
+                response.Code = 500;
+                response.Message = $"Database update error: {dbEx.Message}";
+                response.Data = null;
+            }
+            catch (Exception ex)
+            {
+
+                response.Code = 500;
+                response.Message = $"An error occurred: {ex.Message}";
+                response.Data = null;
+            }
+
+            return response;
+
         }
 
         public async Task<Response> CreateOrderAsync(string customerId, Commodity model)
@@ -103,7 +181,7 @@ namespace eTranscript.Services.Repositories
                 // Check if the category already exists
                 var existingOrder = await _context.Order.AnyAsync(c => c.Status == 0 && c.CustomerId == customerId.Trim());
 
-                if (existingOrder != null)
+                if (existingOrder != false)
                 {
 
                     response.Message = "Order already exists";
@@ -171,7 +249,7 @@ namespace eTranscript.Services.Repositories
                 // Check if the category already exists
                 var existingOrderDetail = await _context.OrderDetail.AnyAsync(c => c.OrderNumber == orderNumber);
 
-                if (existingOrderDetail != null)
+                if (existingOrderDetail != false)
                 {
 
                     response.Message = "OrderDetail already exists";

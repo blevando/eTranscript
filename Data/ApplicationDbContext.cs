@@ -5,7 +5,7 @@ namespace eTranscript.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        private DbSet<OrderItemType> orderItemType;
+        
 
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {

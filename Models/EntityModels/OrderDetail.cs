@@ -16,7 +16,8 @@
 public enum OrderItemType
 {
     Document,
-    Shipment
+    Shipment,
+    Others
 
 }
  

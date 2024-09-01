@@ -27,5 +27,37 @@ namespace eTranscript.Controllers
 
             return res;
         }
+
+
+        [HttpPost]
+        [Route("AddShipmentToOrderDetails")]
+        public async Task<Response> AddShipmentToOrderDetailAsync(string OrderNumber, [FromBody] List<ShipmentDto> model)
+        {
+            
+                var res = await _orderManager.AddShipmentToOrderDetailAsync(OrderNumber, model);
+
+                return res;
+ 
+             
+        }
+
+
+        [HttpPost]
+        [Route("AddInvoice")]
+        public async Task<Response> AddInvoiceAsync(string OrderNumber)
+        {
+
+            var res = await _orderManager.CreateInvoiceAsync(OrderNumber);
+
+            return res;
+
+
+        }
+
+
+
+
+
+
     }
 }

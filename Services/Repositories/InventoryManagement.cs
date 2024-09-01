@@ -233,7 +233,7 @@ namespace eTranscript.Services.Repositories
 
             try
             {
-                var existShipment = await _context.Shipment.FirstOrDefaultAsync(a => a.id == Id);
+                var existShipment = await _context.Shipment.FirstOrDefaultAsync(a => a.Id == Id);
                 if(existShipment !=null)
                 {
                     _context.Shipment.Remove(existShipment);
@@ -402,7 +402,7 @@ namespace eTranscript.Services.Repositories
 
             try
             {
-                var checkshipment = await _context.Shipment.Where(a => a.id == Id).FirstOrDefaultAsync();
+                var checkshipment = await _context.Shipment.Where(a => a.Id == Id).FirstOrDefaultAsync();
                 if(checkshipment !=null)
                 {
                     response.Message = "Successful";
@@ -513,7 +513,7 @@ namespace eTranscript.Services.Repositories
 
             try
             {
-                var checkShipment = await _context.Shipment.FirstOrDefaultAsync(a => a.id == Id);
+                var checkShipment = await _context.Shipment.FirstOrDefaultAsync(a => a.Id == Id);
                 if(checkShipment !=null)
                 {
                     response.Message = "Successfull";
