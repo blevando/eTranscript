@@ -5,6 +5,8 @@ namespace eTranscript.Data
 {
     public class ApplicationDbContext : DbContext
     {
+        private DbSet<OrderItemType> orderItemType;
+
         public ApplicationDbContext(DbContextOptions options) : base(options)
         {
 
@@ -17,10 +19,6 @@ namespace eTranscript.Data
         public DbSet<OrderDetail> OrderDetail { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<Receipt> Receipt { get; set; }
-
-
-
-
 
     }
 }

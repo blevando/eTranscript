@@ -10,7 +10,7 @@ namespace eTranscript.Services.Interfaces
         Task<Response> CreateOrderAsync(string CustomerId, Commodity model); //  1
                                                          
         Task<Response> CreateOrderDetailByCommodityAsync(string orderNumber, Commodity model); //  2
-        Task<Response> AddShipmentToOrderDetailAsync(string OrderNumber, Shipment model); //  3
+        Task<Response> AddShipmentToOrderDetailAsync(string OrderNumber, List<ShipmentDto> model); //  3
         Task<Response> DeleteShipmentFromOrderDetailAsync(string OrderNumber, Shipment model); //  3
 
         Task<Response> CreateInvoiceAsync(string OrderNumber); //  4

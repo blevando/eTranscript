@@ -2,7 +2,7 @@
 {
     public class Shipment
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public string? Name { get; set; } // item 
 
         public decimal Price { get; set; }        
