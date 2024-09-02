@@ -1,4 +1,6 @@
-﻿namespace eTranscript.Models.EntityModels
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace eTranscript.Models.EntityModels
 {
     public class OrderDetail
     {
@@ -9,6 +11,7 @@
 
         public OrderItemType OrderItemType { get; set; } // This is an enum 
 
+        [Column(TypeName = "decimal(18,4)")]
         public decimal Price { get; set; }
  
 
