@@ -466,6 +466,7 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
+
         public async Task<Response> UpdateCommodityAsync(Commodity model, int Id)
         {
             var response = new Response();
@@ -506,6 +507,7 @@ namespace eTranscript.Services.Repositories
 
             return response;
         }
+
 
         public async Task<Response> UpdateShipmentAsync(Shipment model, int Id)
         {
