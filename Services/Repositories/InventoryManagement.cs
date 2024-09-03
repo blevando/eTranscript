@@ -17,6 +17,7 @@ namespace eTranscript.Services.Repositories
 
         public async Task<Response> CreateCategoryAsync(Category model)
         {
+
             var response = new Response();
 
             try

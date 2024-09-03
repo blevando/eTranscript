@@ -2,16 +2,13 @@
 
 namespace eTranscript.Models.DomainModels
 {
-    public class ShipmentDto
-    {
-                
-        public string? Name { get; set; } // item 
-
-        public string? Address { get; set; } // item 
+    public class CommodityDto
+    {       
+        public string? Item { get; set; }
 
         [Column(TypeName = "decimal(18,4)")]
         public decimal Price { get; set; }
- 
+
 
     }
 }

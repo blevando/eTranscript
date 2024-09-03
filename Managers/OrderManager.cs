@@ -13,7 +13,7 @@ namespace eTranscript.Managers
             _order = order;
         }
 
-        public async Task<Response> CreateOrderAsync(string customerId, Commodity model)
+        public async Task<Response> CreateOrderAsync(string customerId, CommodityDto model)
         {
             var resp = await _order.CreateOrderAsync(customerId, model);
             return resp;
@@ -21,7 +21,7 @@ namespace eTranscript.Managers
 
         public async Task<Response> AddShipmentToOrderDetailAsync(string OrderNumber, List<ShipmentDto> model)
         {
-            var resp = await _order.AddShipmentToOrderDetailAsync(OrderNumber,  model);
+            var resp = await _order.AddShipmentToOrderDetailAsync(OrderNumber, model);
             return resp;
 
         }
@@ -32,9 +32,31 @@ namespace eTranscript.Managers
             return resp;
         }
 
-
-
-
+        public async Task<Response> AddCommodityToOrderDetailAsync(string OrderNumber, CommodityDto model)
+        {
+            var resp = await _order.AddCommodityToOrderDetailAsync(OrderNumber, model);
+            return resp;
 
         }
+
+
+        public async Task<Response> UpdateCommodityInOrderDetailAsync(string OrderNumber, CommodityDto model)
+        {
+
+            var resp = await _order.UpdateCommodityInOrderDetailAsync(OrderNumber, model);
+            return resp;
+
+        }
+
+        public async Task<Response> UpdateShipmentInOrderDetailAsync(string OrderNumber, List<ShipmentDto> model)
+        {
+
+            var resp = await _order.UpdateShipmentInOrderDetailAsync(OrderNumber, model);
+            return resp;
+
+        }
+
+
+
+    }
 }

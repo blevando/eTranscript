@@ -50,6 +50,7 @@ namespace eTranscript.Services.Repositories
                         OrderDetail detail = new OrderDetail();
                         detail.OrderNumber = OrderNumber;
                         detail.Price = item.Price;
+                        detail.Address = item.Address;
                         detail.Item = item.Name;
                         detail.OrderItemType = OrderItemType.Shipment;
                         orderDetails.Add(detail);
@@ -125,7 +126,7 @@ namespace eTranscript.Services.Repositories
                     existingInvoice.ShippmentSubtotal = shippingSubtotal;
 
                     _context.Entry(existingInvoice).State = EntityState.Modified;
-                 //   _context.Invoice.Update(existingInvoice);
+                    //   _context.Invoice.Update(existingInvoice);
 
                     response.Message = "Invoice already exists";
                     response.Code = 200;
@@ -172,21 +173,23 @@ namespace eTranscript.Services.Repositories
 
         }
 
-        public async Task<Response> CreateOrderAsync(string customerId, Commodity model)
+        public async Task<Response> CreateOrderAsync(string customerId, CommodityDto model)
         {
 
             Response response = new Response();
             try
             {
                 // Check if the category already exists
-                var existingOrder = await _context.Order.AnyAsync(c => c.Status == 0 && c.CustomerId == customerId.Trim());
-
-                if (existingOrder != false)
+                var existingOrder = await _context.Order.FirstOrDefaultAsync(c => c.Status == 0 && c.CustomerId == customerId.Trim());
+                string orderNumber = CommonUtility.GetOrderNumberByCustomerId(customerId);
+                if (existingOrder != null)
                 {
 
                     response.Message = "Order already exists";
                     response.Code = 200;
                     response.Data = existingOrder;
+                    orderNumber = existingOrder.OrderNumber;
+
 
                     return response;
                 }
@@ -197,7 +200,7 @@ namespace eTranscript.Services.Repositories
                     CustomerId = customerId,
 
 
-                    OrderNumber = CommonUtility.GetOrderNumberByCustomerId(customerId),
+                    OrderNumber = orderNumber,
 
                     OrderDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff"),
 
@@ -219,7 +222,9 @@ namespace eTranscript.Services.Repositories
                 // Also create the order details associated with this order
                 //Insert the commodity ordered
 
-                var orderDetail = await CreateOrderDetailByCommodityAsync(order.OrderNumber, model);
+                var orderDetail = await AddCommodityToOrderDetailAsync(order.OrderNumber, model);
+
+                // var shippingDetail = await AddShipmentToOrderDetailAsync(order.OrderNumber, shipments);
 
                 return response;
             }
@@ -241,7 +246,7 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
-        public async Task<Response> CreateOrderDetailByCommodityAsync(string orderNumber, Commodity model)
+        public async Task<Response> AddCommodityToOrderDetailAsync(string orderNumber, CommodityDto model)
         {
             Response response = new Response();
             try
@@ -256,6 +261,11 @@ namespace eTranscript.Services.Repositories
                     response.Code = 200;
                     response.Data = existingOrderDetail;
 
+                    // Update the order Details
+
+
+
+
                     return response;
                 }
 
@@ -264,7 +274,9 @@ namespace eTranscript.Services.Repositories
                 {
                     OrderNumber = orderNumber,
                     Price = model.Price,
-                    Item = model.Item
+                    Item = model.Item,
+                    OrderItemType = OrderItemType.Document,
+                    Address = "Pickup by hand",
 
                 };
 
@@ -297,6 +309,123 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
+        public async Task<Response> UpdateCommodityInOrderDetailAsync(string orderNumber, CommodityDto model)
+        {
+
+            Response response = new Response();
+            //var existingInvoice = await _context.OrderDetail.AnyAsync(c => c.OrderNumber == OrderNumber);
+            var existingCommodity = await _context.OrderDetail.FirstOrDefaultAsync(c => c.OrderNumber == orderNumber && c.OrderItemType == OrderItemType.Document);
+            OrderDetail detail = new OrderDetail();
+
+            if (existingCommodity != null)
+            {
+
+                detail.OrderNumber = orderNumber;
+                detail.Id = existingCommodity.Id;
+                detail.Address = existingCommodity.Address;
+                detail.Price = existingCommodity.Price;
+                detail.Item = existingCommodity.Item;
+                detail.OrderItemType = existingCommodity.OrderItemType;
+
+
+                _context.Entry(detail).State = EntityState.Modified;
+                //   _context.Invoice.Update(existingInvoice);
+
+                response.Message = "Updated already exists";
+                response.Code = 200;
+                response.Data = detail;
+            }
+            else
+            {
+
+                detail.OrderNumber = orderNumber;
+                detail.Id = existingCommodity.Id;
+                detail.Address = existingCommodity.Address;
+                detail.Price = existingCommodity.Price;
+                detail.Item = existingCommodity.Item;
+                detail.OrderItemType = existingCommodity.OrderItemType;
+
+                _context.OrderDetail.Add(detail);
+                response.Message = "Added Commodity to exists orderdetail";
+                response.Code = 200;
+                response.Data = detail;
+
+                // it is new - just insert
+            }
+
+            await _context.SaveChangesAsync();
+            return response;
+        }
+
+       public async Task<Response> UpdateShipmentInOrderDetailAsync(string OrderNumber, List<ShipmentDto> model)
+        {
+
+            Response response = new Response();
+            try
+            {
+                if (model.Count > 0)
+                {
+                    // Delete the existing shipment Items in the OrderDetail Table
+
+                    var shippmentsToRemove = _context.OrderDetail.Where(p => p.OrderNumber == OrderNumber && p.OrderItemType == OrderItemType.Shipment).ToList();
+
+                    // Remove the entities that match the condition
+                    _context.OrderDetail.RemoveRange(shippmentsToRemove);
+
+                    // Save changes to the database
+                    _context.SaveChanges();
+
+                    // Then Add all items in the model collection above
+
+                    List<OrderDetail> orderDetails = new List<OrderDetail>();
+
+                    foreach (ShipmentDto item in model)
+                    {
+                        OrderDetail detail = new OrderDetail();
+                        detail.OrderNumber = OrderNumber;
+                        detail.Price = item.Price;
+                        detail.Address = item.Address;
+                        detail.Item = item.Name;
+                        detail.OrderItemType = OrderItemType.Shipment;
+                        orderDetails.Add(detail);
+
+                    }
+                    // Add the list of OrderDetail objects to the context
+                    await _context.OrderDetail.AddRangeAsync(orderDetails);
+
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+
+                    response.Message = "Shipment Items inserted";
+                    response.Code = 200;
+                    response.Data = model.Count;
+
+                }
+                else
+                {
+                    response.Message = "No Item to insert";
+                    response.Code = 201;
+                    response.Data = model.Count;
+                }
+                return response;
+            }
+            catch (DbUpdateException dbEx)
+            {
+
+                response.Code = 500;
+                response.Message = $"Database update error: {dbEx.Message}";
+                response.Data = null;
+            }
+            catch (Exception ex)
+            {
+
+                response.Code = 500;
+                response.Message = $"An error occurred: {ex.Message}";
+                response.Data = null;
+            }
+
+            return response;
+        }
         public Task<Response> CreateReceiptAsync(string OrderNumber, decimal TotalPrice)
         {
             throw new NotImplementedException();

@@ -19,11 +19,11 @@ namespace eTranscript.Controllers
 
         [HttpPost]
         [Route("CreateOrder")]
-        public async Task<Response> CreateOrderAsync(string customerId, [FromBody] Commodity model)
+        public async Task<Response> CreateOrderAsync(string customerId, [FromBody] CommodityDto model)
         {
 
 
-            var res = await _orderManager.CreateOrderAsync(customerId, model);
+            var res = await _orderManager.CreateOrderAsync(customerId, model );
 
             return res;
         }
@@ -55,9 +55,40 @@ namespace eTranscript.Controllers
         }
 
 
+        [HttpPost]
+        [Route("AddCommodityToOrderDetail")]
 
+        public async Task<Response> AddCommodityToOrderDetailAsync(string OrderNumber, [FromBody] CommodityDto model)
+        {
 
+            var res = await _orderManager.AddCommodityToOrderDetailAsync(OrderNumber, model);
 
+            return res;
 
+        }
+
+        [HttpPut]
+        [Route("UpdateCommodityInOrderDetail")]
+
+        public async Task<Response> UpdateCommodityInOrderDetailAsyncAsync(string OrderNumber, [FromBody] CommodityDto model)
+        {
+
+            var res = await _orderManager.UpdateCommodityInOrderDetailAsync(OrderNumber, model);
+
+            return res;
+
+        }
+
+        [HttpPut]
+        [Route("UpdateShipmentInOrderDetail")]
+
+        public async Task<Response> UpdateShipmentInOrderDetailAsync(string OrderNumber, [FromBody] List<ShipmentDto> model)
+        {
+
+            var res = await _orderManager.UpdateShipmentInOrderDetailAsync(OrderNumber, model);
+
+            return res;
+
+        }
     }
 }
