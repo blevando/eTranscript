@@ -22,8 +22,9 @@ namespace eTranscript.Controllers
         public async Task<Response> CreateOrderAsync(string customerId, [FromBody] CommodityDto model)
         {
 
-
+           
             var res = await _orderManager.CreateOrderAsync(customerId, model );
+
 
             return res;
         }

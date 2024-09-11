@@ -1,4 +1,6 @@
-﻿namespace eTranscript.Common.Utilities
+﻿using System;
+
+namespace eTranscript.Common.Utilities
 {
     public static class CommonUtility
     {
@@ -21,7 +23,14 @@
 
         public static string GetInvoiceNumber()
         {
-            throw new NotImplementedException();
+            char[] ch = DateTime.Now.ToString("ddmmssfff").ToCharArray();
+            string output = string.Concat(ch.Where(Char.IsDigit));
+
+            
+            output = output.Substring(0, 6);
+
+            return output;
+
         }
     }
 }

@@ -5,6 +5,7 @@ using eTranscript.Models.EntityModels;
 using eTranscript.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection.Metadata;
 
@@ -61,6 +62,10 @@ namespace eTranscript.Services.Repositories
 
                     // Save changes to the database
                     await _context.SaveChangesAsync();
+
+                    // Add invoice
+
+             
 
                     response.Message = "Shipment Items inserted";
                     response.Code = 200;
@@ -175,7 +180,7 @@ namespace eTranscript.Services.Repositories
 
         public async Task<Response> CreateOrderAsync(string customerId, CommodityDto model)
         {
-
+             
             Response response = new Response();
             try
             {
@@ -222,9 +227,11 @@ namespace eTranscript.Services.Repositories
                 // Also create the order details associated with this order
                 //Insert the commodity ordered
 
+                // Adds the document to it
                 var orderDetail = await AddCommodityToOrderDetailAsync(order.OrderNumber, model);
 
-                // var shippingDetail = await AddShipmentToOrderDetailAsync(order.OrderNumber, shipments);
+                 
+              //   var shippingDetail = await AddShipmentToOrderDetailAsync(order.OrderNumber, shipments);
 
                 return response;
             }
@@ -264,7 +271,7 @@ namespace eTranscript.Services.Repositories
                     // Update the order Details
 
 
-
+                   
 
                     return response;
                 }
@@ -278,11 +285,22 @@ namespace eTranscript.Services.Repositories
                     OrderItemType = OrderItemType.Document,
                     Address = "Pickup by hand",
 
+                    
+                
+
                 };
 
                 await _context.OrderDetail.AddAsync(orderDetail);
                 await _context.SaveChangesAsync();
 
+                // Add shipment 
+
+                if (model.Shipment.Count > 0)
+                {
+                    var shipmentDetail = await  AddShipmentToOrderDetailAsync(orderNumber, model.Shipment);
+
+                    var newInvoice = await CreateInvoiceAsync(orderNumber);
+                }
                 response.Code = 200;
                 response.Message = "OrderDetail created successfully";
                 response.Data = orderDetail;

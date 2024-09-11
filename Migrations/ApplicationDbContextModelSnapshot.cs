@@ -141,6 +141,9 @@ namespace eTranscript.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Item")
                         .HasColumnType("nvarchar(max)");
 

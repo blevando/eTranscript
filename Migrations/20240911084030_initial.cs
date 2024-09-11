@@ -84,6 +84,7 @@ namespace eTranscript.Migrations
                     OrderNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Item = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OrderItemType = table.Column<int>(type: "int", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<decimal>(type: "decimal(18,4)", nullable: false)
                 },
                 constraints: table =>

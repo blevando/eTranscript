@@ -11,7 +11,7 @@ using eTranscript.Data;
 namespace eTranscript.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240902100730_initial")]
+    [Migration("20240911084030_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -142,6 +142,9 @@ namespace eTranscript.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Item")
                         .HasColumnType("nvarchar(max)");
