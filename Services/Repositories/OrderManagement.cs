@@ -6,7 +6,9 @@ using eTranscript.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.Eventing.Reader;
 using System.Reflection.Metadata;
 
 namespace eTranscript.Services.Repositories
@@ -65,7 +67,7 @@ namespace eTranscript.Services.Repositories
 
                     // Add invoice
 
-             
+
 
                     response.Message = "Shipment Items inserted";
                     response.Code = 200;
@@ -180,7 +182,7 @@ namespace eTranscript.Services.Repositories
 
         public async Task<Response> CreateOrderAsync(string customerId, CommodityDto model)
         {
-             
+
             Response response = new Response();
             try
             {
@@ -230,8 +232,8 @@ namespace eTranscript.Services.Repositories
                 // Adds the document to it
                 var orderDetail = await AddCommodityToOrderDetailAsync(order.OrderNumber, model);
 
-                 
-              //   var shippingDetail = await AddShipmentToOrderDetailAsync(order.OrderNumber, shipments);
+
+                //   var shippingDetail = await AddShipmentToOrderDetailAsync(order.OrderNumber, shipments);
 
                 return response;
             }
@@ -271,7 +273,7 @@ namespace eTranscript.Services.Repositories
                     // Update the order Details
 
 
-                   
+
 
                     return response;
                 }
@@ -285,8 +287,8 @@ namespace eTranscript.Services.Repositories
                     OrderItemType = OrderItemType.Document,
                     Address = "Pickup by hand",
 
-                    
-                
+
+
 
                 };
 
@@ -297,7 +299,7 @@ namespace eTranscript.Services.Repositories
 
                 if (model.Shipment.Count > 0)
                 {
-                    var shipmentDetail = await  AddShipmentToOrderDetailAsync(orderNumber, model.Shipment);
+                    var shipmentDetail = await AddShipmentToOrderDetailAsync(orderNumber, model.Shipment);
 
                     var newInvoice = await CreateInvoiceAsync(orderNumber);
                 }
@@ -375,7 +377,7 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
-       public async Task<Response> UpdateShipmentInOrderDetailAsync(string OrderNumber, List<ShipmentDto> model)
+        public async Task<Response> UpdateShipmentInOrderDetailAsync(string OrderNumber, List<ShipmentDto> model)
         {
 
             Response response = new Response();
@@ -454,9 +456,89 @@ namespace eTranscript.Services.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Response> GetOrderByNumberAsync(string orderNumber)
+        public async Task<Response> GetOrderByNumberAsync(string orderNumber)
         {
-            throw new NotImplementedException();
+
+            var orderToRetrieve = await _context.Order.FirstOrDefaultAsync(p => p.OrderNumber == orderNumber);
+
+            Response response = new Response();
+
+            if (orderToRetrieve != null)
+            {
+                // The order exists
+                // Then copy the order attributes into the consolidated object
+                ConsolidatedOrderDto consolidated = new ConsolidatedOrderDto();
+
+                consolidated.OrderNumber = orderToRetrieve.OrderNumber;
+                consolidated.CustomerName = orderNumber;
+                consolidated.PaymentMethod = orderToRetrieve.PaymentMethod;
+                consolidated.PaymentReference = orderToRetrieve.PaymentReference;
+                consolidated.PaymentGateway = orderToRetrieve.PaymentGateway;
+
+                consolidated.InvoiceDto = new InvoiceDto ();
+                consolidated.CommodityDto = new CommodityDto();
+                consolidated.CommodityDto.Shipment = new List<ShipmentDto>();
+
+                // Get a list of orderdetails
+                List<OrderDetail> orderDetails = _context.OrderDetail.Where(p => p.OrderNumber == orderNumber).ToList();
+
+                if (orderDetails != null)
+                {
+                    foreach (var orderDetail in orderDetails)
+                    {
+                        switch (orderDetail.OrderItemType)
+                        {
+                            case OrderItemType.Document:
+                                consolidated.CommodityDto.Price = orderDetail.Price;
+                                consolidated.CommodityDto.Item = orderDetail.Item;
+                                 consolidated.CommodityDto.Address = orderDetail.Address;
+
+                                break;
+
+                            case OrderItemType.Shipment:
+
+                                ShipmentDto shipment = new ShipmentDto();
+                                shipment.Address = orderDetail.Address;
+                                shipment.Price = orderDetail.Price;
+                                shipment.Name = orderDetail.Item;
+                                consolidated.CommodityDto.Shipment.Add(shipment);
+
+                                break;
+                            default:
+
+                                break;
+                        }
+                    }
+                }
+
+                // Add invoice here
+
+                    var invoices = await _context.Invoice.FirstOrDefaultAsync(p => p.OrderNumber == orderNumber);
+
+                if (invoices != null)
+                {
+
+                    consolidated.InvoiceDto.Status = invoices.Status;
+                    consolidated.InvoiceDto.OrderNumber = invoices.OrderNumber;
+                    consolidated.InvoiceDto.InvoiceNumber = invoices.InvoiceNumber;
+                    consolidated.InvoiceDto.ShippmentSubtotal = invoices.ShippmentSubtotal;
+                    consolidated.InvoiceDto.DocumentSubTotal = invoices.DocumentSubTotal;
+                    consolidated.InvoiceDto.TaxAmount = invoices.TaxAmount;
+                    consolidated.InvoiceDto.TotalAmount = invoices.TotalAmount;
+
+                }
+              
+
+                response.Message = "Success";
+                 response.Code = 200;
+                response.Data = consolidated;
+
+
+            }
+
+
+            return response;
+
         }
 
         public Task<Response> GetTotalPriceFromOrderDetailsByOrderNumberAsync(string OrderNumber)
@@ -475,6 +557,60 @@ namespace eTranscript.Services.Repositories
         }
 
         public Task<Response> UpdateReceiptAsync(string OrderNumber, decimal TotalPrice, bool Status)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task<Response> DeleteOrderAsync(string OrderNumber)
+        {
+            Response response = new Response();
+
+
+
+            // Check if it exists
+            var orderToRemove = await _context.Order.FirstOrDefaultAsync(p => p.OrderNumber == OrderNumber);
+
+            if (orderToRemove != null)
+            {
+                // 1. Delete the Invoice
+                var invoiceToRemove = await _context.Invoice.FirstOrDefaultAsync(p => p.OrderNumber == OrderNumber);
+                if (invoiceToRemove != null)
+                {
+                    _context.Invoice.Remove(invoiceToRemove);
+                    await _context.SaveChangesAsync();
+                }
+
+                //2. Delete the OrderDetail
+
+                var orderdetailToRemove = await _context.OrderDetail.FirstOrDefaultAsync(p => p.OrderNumber == OrderNumber);
+                if (orderdetailToRemove != null)
+                {
+                    _context.OrderDetail.Remove(orderdetailToRemove);
+                    await _context.SaveChangesAsync();
+                }
+                //3. Delete the Order
+
+
+                _context.Order.Remove(orderToRemove);
+                await _context.SaveChangesAsync();
+
+
+                response.Data = orderToRemove;
+                response.Code = 200;
+                response.Message = "Successfully removed an order";
+            }
+            else
+            {
+                response.Data = null;
+                response.Code = 200;
+                response.Message = "Order does not exists";
+            }
+
+
+            return response;
+        }
+
+        public Task<Response> ProceedToPaymentAsync(string orderNumber)
         {
             throw new NotImplementedException();
         }

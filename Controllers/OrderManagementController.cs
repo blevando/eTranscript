@@ -21,9 +21,17 @@ namespace eTranscript.Controllers
         [Route("CreateOrder")]
         public async Task<Response> CreateOrderAsync(string customerId, [FromBody] CommodityDto model)
         {
-
            
             var res = await _orderManager.CreateOrderAsync(customerId, model );
+
+            return res;
+        }
+
+        [HttpGet]
+        [Route("GetOrderByNumber")]
+        public async Task<Response> GetOrderByNumberAsync(string OrderNumber)
+        {
+            var res = await _orderManager.GetOrderByNumberAsync(OrderNumber);
 
 
             return res;

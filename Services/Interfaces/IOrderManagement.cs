@@ -29,9 +29,11 @@ namespace eTranscript.Services.Interfaces
         Task<Response> UpdateReceiptAsync(string OrderNumber, decimal TotalPrice, bool Status);
 
         Task<Response> UpdateOrderAsync(string OrderNumber, string PaymentGateWay, string PaymentMethod, string PaymentReference,string Note, bool PaymentStatus );
-        Task<Response> GetOrderByNumberAsync(string orderNumber);
- 
-       
+
+        Task<Response> DeleteOrderAsync(string OrderNumber);
+       Task<Response> GetOrderByNumberAsync(string orderNumber);
+
+        Task<Response> ProceedToPaymentAsync(string orderNumber);
 
     }
 }

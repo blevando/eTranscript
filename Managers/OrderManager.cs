@@ -32,6 +32,13 @@ namespace eTranscript.Managers
             return resp;
         }
 
+
+        public async Task<Response> GetOrderByNumberAsync(string OrderNumber)
+        {
+            var resp = await _order.GetOrderByNumberAsync(OrderNumber);
+            return resp;
+        }
+
         public async Task<Response> AddCommodityToOrderDetailAsync(string OrderNumber, CommodityDto model)
         {
             var resp = await _order.AddCommodityToOrderDetailAsync(OrderNumber, model);
