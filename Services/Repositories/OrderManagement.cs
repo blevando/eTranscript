@@ -476,8 +476,8 @@ namespace eTranscript.Services.Repositories
                 consolidated.PaymentGateway = orderToRetrieve.PaymentGateway;
 
                 consolidated.InvoiceDto = new InvoiceDto ();
-                consolidated.CommodityDto = new CommodityDto();
-                consolidated.CommodityDto.Shipment = new List<ShipmentDto>();
+                consolidated.DocumentDto = new DocumentDto();
+                consolidated.ShipmentDto = new List<ShipmentDto>();
 
                 // Get a list of orderdetails
                 List<OrderDetail> orderDetails = _context.OrderDetail.Where(p => p.OrderNumber == orderNumber).ToList();
@@ -489,9 +489,9 @@ namespace eTranscript.Services.Repositories
                         switch (orderDetail.OrderItemType)
                         {
                             case OrderItemType.Document:
-                                consolidated.CommodityDto.Price = orderDetail.Price;
-                                consolidated.CommodityDto.Item = orderDetail.Item;
-                                 consolidated.CommodityDto.Address = orderDetail.Address;
+                                consolidated.DocumentDto.Price = orderDetail.Price;
+                                consolidated.DocumentDto.Item = orderDetail.Item;
+                                 consolidated.DocumentDto.Address = orderDetail.Address;
 
                                 break;
 
@@ -501,7 +501,7 @@ namespace eTranscript.Services.Repositories
                                 shipment.Address = orderDetail.Address;
                                 shipment.Price = orderDetail.Price;
                                 shipment.Name = orderDetail.Item;
-                                consolidated.CommodityDto.Shipment.Add(shipment);
+                                consolidated.ShipmentDto.Add(shipment);
 
                                 break;
                             default:
@@ -534,6 +534,12 @@ namespace eTranscript.Services.Repositories
                 response.Data = consolidated;
 
 
+            }
+            else
+            {
+                response.Message = "No data found";
+                response.Code = 404;
+                response.Data = null;
             }
 
 
@@ -602,7 +608,7 @@ namespace eTranscript.Services.Repositories
             else
             {
                 response.Data = null;
-                response.Code = 200;
+                response.Code = 404;
                 response.Message = "Order does not exists";
             }
 

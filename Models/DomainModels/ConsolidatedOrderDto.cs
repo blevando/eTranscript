@@ -12,8 +12,9 @@ namespace eTranscript.Models.DomainModels
         public string? PaymentMethod { get; set; }
         public string? PaymentReference { get; set; }
 
-        public CommodityDto CommodityDto { get; set; }
+        public DocumentDto DocumentDto { get; set; }
 
+              
         public List<ShipmentDto> ShipmentDto { get; set; }
 
         public InvoiceDto InvoiceDto { get; set; }

@@ -99,5 +99,13 @@ namespace eTranscript.Controllers
             return res;
 
         }
+
+        [HttpDelete]
+        [Route ("DeleteOrder")]
+        public async Task<Response> DeleteOrderAsync(string OrderNumber)
+        {
+            var resp = await _orderManager.DeleteOrderAsync(OrderNumber);
+            return resp;
+        }
     }
 }
