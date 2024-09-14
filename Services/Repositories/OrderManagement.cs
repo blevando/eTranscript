@@ -469,11 +469,15 @@ namespace eTranscript.Services.Repositories
                 // Then copy the order attributes into the consolidated object
                 ConsolidatedOrderDto consolidated = new ConsolidatedOrderDto();
 
-                consolidated.OrderNumber = orderToRetrieve.OrderNumber;
+               
                 consolidated.CustomerName = orderNumber;
+                consolidated.CustomerId = orderNumber;
+
+                consolidated.OrderNumber = orderToRetrieve.OrderNumber;
                 consolidated.PaymentMethod = orderToRetrieve.PaymentMethod;
                 consolidated.PaymentReference = orderToRetrieve.PaymentReference;
                 consolidated.PaymentGateway = orderToRetrieve.PaymentGateway;
+                
 
                 consolidated.InvoiceDto = new InvoiceDto ();
                 consolidated.DocumentDto = new DocumentDto();
@@ -616,9 +620,9 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
-        public Task<Response> ProceedToPaymentAsync(string orderNumber)
-        {
-            throw new NotImplementedException();
-        }
+        //public Task<Response> ProceedToPaymentAsync(string orderNumber)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
