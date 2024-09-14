@@ -12,16 +12,25 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IInventoryManagement, eTranscript.Services.Repositories.InventoryManagement>();
 
 // Registrering Managers
 builder.Services.AddScoped<InventoryManager>();
 builder.Services.AddScoped<OrderManager>();
+builder.Services.AddScoped<PaymentFactoryManager>();
 
 
 //Registering Services (Repositories)
 builder.Services.AddScoped<IInventoryManagement, InventoryManagement>();
 builder.Services.AddScoped<IOrderManagement, OrderManagement>();
+builder.Services.AddScoped<IInventoryManagement, InventoryManagement>();
+
+builder.Services.AddScoped<IPaymentFactoryManagement, PaymentFactoryManagement>();
+ 
+builder.Services.AddScoped<IPaymentManagement, CyberPayProcessor>();
+builder.Services.AddScoped<IPaymentManagement, FlutterwaveProcessor>();
+builder.Services.AddScoped<IPaymentManagement, OtherPaymentProcessor>();
+
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(a => a.UseSqlServer(builder.Configuration.GetConnectionString("connectionstring")));
 

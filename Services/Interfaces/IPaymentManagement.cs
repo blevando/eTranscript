@@ -1,6 +1,10 @@
-﻿namespace eTranscript.Services.Interfaces
+﻿using eTranscript.Models.DomainModels;
+
+namespace eTranscript.Services.Interfaces
 {
-    public class IPaymentManagement
-    {
+    public interface IPaymentManagement
+    {               
+        Task<Response> ProcessPaymentAsync(string processorType);
+        
     }
 }
