@@ -592,10 +592,10 @@ namespace eTranscript.Services.Repositories
 
                 //2. Delete the OrderDetail
 
-                var orderdetailToRemove = await _context.OrderDetail.FirstOrDefaultAsync(p => p.OrderNumber == OrderNumber);
+                var orderdetailToRemove =  await _context.OrderDetail.Where(p => p.OrderNumber == OrderNumber).ToListAsync();
                 if (orderdetailToRemove != null)
                 {
-                    _context.OrderDetail.Remove(orderdetailToRemove);
+                    _context.OrderDetail.RemoveRange(orderdetailToRemove);
                     await _context.SaveChangesAsync();
                 }
                 //3. Delete the Order
