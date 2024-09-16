@@ -5,7 +5,12 @@ namespace eTranscript.Services.Repositories
 {
     public class FlutterwaveProcessor : IPaymentManagement
     {
-        public async Task<Response> ProcessPaymentAsync(string processorType)
+        public FlutterwaveProcessor()
+        {
+            
+        }
+
+        public async Task<Response> ProcessPaymentAsync(string processorType, PaymentRequestDto model)
         {
             Response response = new Response();
             response.Message = $"{processorType}: Using Flutterwave";

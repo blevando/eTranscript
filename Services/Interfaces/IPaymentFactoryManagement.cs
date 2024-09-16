@@ -5,6 +5,6 @@ namespace eTranscript.Services.Interfaces
     public interface IPaymentFactoryManagement
     {
 
-        Task<Response> InitiatePaymentAsync(string processorType);
+        Task<Response> InitiatePaymentAsync(string processorType, PaymentRequestDto model);
     }
 }

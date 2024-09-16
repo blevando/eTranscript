@@ -161,6 +161,47 @@ namespace eTranscript.Migrations
                     b.ToTable("OrderDetail");
                 });
 
+            modelBuilder.Entity("eTranscript.Models.EntityModels.PaymentGatewayConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Apikey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Apisecret")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("GatewayUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IntegrationKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentGatewayId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PaymentHookUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReferencePrefix")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("PaymentGatewayConfig");
+                });
+
             modelBuilder.Entity("eTranscript.Models.EntityModels.Receipt", b =>
                 {
                     b.Property<int>("Id")
@@ -216,6 +257,29 @@ namespace eTranscript.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Shipment");
+                });
+
+            modelBuilder.Entity("eTranscript.Models.EntityModels.SplitConfig", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("Amount")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("ShouldDeductFrom")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("WalletCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SplitConfig");
                 });
 #pragma warning restore 612, 618
         }

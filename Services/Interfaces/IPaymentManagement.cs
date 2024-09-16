@@ -4,7 +4,7 @@ namespace eTranscript.Services.Interfaces
 {
     public interface IPaymentManagement
     {               
-        Task<Response> ProcessPaymentAsync(string processorType);
+        Task<Response> ProcessPaymentAsync(string processorType, PaymentRequestDto model);
         
     }
 }

@@ -12,9 +12,9 @@ namespace eTranscript.Managers
         }
 
 
-        public async Task<Response> InitiatePaymentAsync(string processorType)
+        public async Task<Response> InitiatePaymentAsync(string processorType, PaymentRequestDto model)
         {
-            var resp = await _payment.InitiatePaymentAsync(processorType);
+            var resp = await _payment.InitiatePaymentAsync(processorType, model);
             return resp;
         }
     }

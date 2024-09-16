@@ -18,7 +18,7 @@ namespace eTranscript.Controllers
 
         [HttpPost]
         [Route("CreateCategory")]
-        public async Task<IActionResult> CreateCategoryAsync([FromQuery] Category model)
+        public async Task<IActionResult> CreateCategoryAsync([FromBody] Category model)
         {
             //var response = new Response();
 

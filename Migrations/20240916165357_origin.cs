@@ -4,7 +4,7 @@
 
 namespace eTranscript.Migrations
 {
-    public partial class initial : Migration
+    public partial class origin : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -93,6 +93,25 @@ namespace eTranscript.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentGatewayConfig",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentGatewayId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Apikey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Apisecret = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    GatewayUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentHookUrl = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IntegrationKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ReferencePrefix = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentGatewayConfig", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Receipt",
                 columns: table => new
                 {
@@ -124,6 +143,21 @@ namespace eTranscript.Migrations
                 {
                     table.PrimaryKey("PK_Shipment", x => x.Id);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "SplitConfig",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    WalletCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Amount = table.Column<int>(type: "int", nullable: false),
+                    ShouldDeductFrom = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SplitConfig", x => x.Id);
+                });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -144,10 +178,16 @@ namespace eTranscript.Migrations
                 name: "OrderDetail");
 
             migrationBuilder.DropTable(
+                name: "PaymentGatewayConfig");
+
+            migrationBuilder.DropTable(
                 name: "Receipt");
 
             migrationBuilder.DropTable(
                 name: "Shipment");
+
+            migrationBuilder.DropTable(
+                name: "SplitConfig");
         }
     }
 }
