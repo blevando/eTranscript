@@ -2,6 +2,7 @@
 using eTranscript.Services.Interfaces;
 using System.Text.Json;
 using System.Net.Http;
+using System.Text;
 
 
 namespace eTranscript.Services.Repositories
@@ -13,36 +14,38 @@ namespace eTranscript.Services.Repositories
         public CyberPayProcessor()
         {
         }
- 
 
         public async Task<Response> ProcessPaymentAsync(string processorType, PaymentRequestDto model)
         {
             Response response = new Response();
 
-
-
-         
-
             var jsonString = JsonSerializer.Serialize(model);
-
-           // var  = new StringContent(jsonString);
             var client = new HttpClient();
 
-                var request = new HttpRequestMessage(HttpMethod.Post, "https://payment-api.staging.cyberpay.ng/api/v1/payments");
+            var request = new HttpRequestMessage(HttpMethod.Post, "https://payment-api.staging.cyberpay.ng/api/v1/payments");
 
-                request.Headers.Add("APIkey", "MDc4YjQ4YTVjNjQ0NDJkZGI2M2FjM2QxZjA2MDQxNTM=");
-                // var content = new StringContent("{\r\n    \"Currency\": \"NGN\",\r\n    \"MerchantRef\": \"9552354668\",\r\n    \"Amount\": 50000,\r\n    \"Description\": \"showmax subscription\",\r\n    \"CustomerId\": \"191\",\r\n    \"CustomerName\": \"Josie\",\r\n    \"CustomerEmail\": \"Flavie_Turcotte@yahoo.com\",\r\n    \"CustomerMobile\": \"401-954-6342\",\r\n    \"IntegrationKey\": \"078b48a5c64442ddb63ac3d1f0604153\",\r\n    \"ReturnUrl\": \"http://www.*******.com\",\r\n    \"WebhookUrl\": \"https://merchant_webhook_url\",\r\n    \"ProductCode\": \"CAR_LOAN\",\r\n    \"Splits\": [\r\n        {\r\n            \"WalletCode\": \"teargstd\",\r\n            \"Amount\": 50000,\r\n            \"ShouldDeductFrom\": true\r\n        }\r\n    ]\r\n}", null, "application/json");
-                var content = new StringContent(jsonString);
-                request.Content = content;
-                var result = await client.SendAsync(request);
-                result.EnsureSuccessStatusCode();
+            // Set the API key in the headers
+            request.Headers.Add("APIkey", "MDc4YjQ4YTVjNjQ0NDJkZGI2M2FjM2QxZjA2MDQxNTM=");
 
-                response.Data = result.Content.ReadAsStringAsync();
-                response.Message = $"{processorType}: Using CyberPay";
-                response.Code = 200;
-            
-            return await Task.FromResult(response);
+            // Specify the Content-Type as application/json explicitly
+            var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
+            // Assign the content to the request
+            request.Content = content;
+
+            // Send the request and ensure it is successful
+            var result = await client.SendAsync(request);
+            result.EnsureSuccessStatusCode();
+
+            // Process the result
+            response.Data = await result.Content.ReadAsStringAsync();
+            response.Message = $"{processorType}: Using CyberPay";
+            response.Code = 200;
+
+            return response;
         }
+
+
+       
     }
 }
