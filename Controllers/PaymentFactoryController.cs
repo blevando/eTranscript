@@ -29,13 +29,12 @@ namespace eTranscript.Controllers
 
             //var request = HttpContext.Request;
             //var fullUrl = $"{request.Scheme}://{request.Host}{request.Path}{request.QueryString}";
-            //var fullUrl1 = $"{request.Scheme}://{request.Host}/api/PaymentFactory/InitiatePayment";
+            //var fullUrl1 = $"{request.Scheme}://{request.Host}/api/PaymentFactory/CyberpayWebhook";
         }
 
         [HttpPost]
-        [Route("CyberpayWebhook")]
-        [HttpPost]
-        public async Task<IActionResult> CyberpayWebHookAsync()
+        [Route("CyberpayWebhook")]      
+        public async Task<IActionResult> CyberpayWebHookAsync([FromBody] PaymentHookDto model)
         {
             try
             {
@@ -62,7 +61,7 @@ namespace eTranscript.Controllers
                     {
                         return BadRequest("Cyberpay-Signature header is empty.");
                     }
-
+                     
                     // Generate hash from the request body using the secret key
                     string key = "XXX";  // Replace with your actual secret key
                     string generatedSignature;
@@ -82,6 +81,8 @@ namespace eTranscript.Controllers
                     // If signature is valid, process the payment payload
                     var transactionPayload = JsonConvert.DeserializeObject(requestBody);
                     
+                    //model
+
                     // TODO: Handle the successful payment (e.g., save transaction, update order status, etc.)
 
                     return Ok("Webhook processed successfully.");
