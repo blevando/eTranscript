@@ -21,11 +21,9 @@ namespace eTranscript.Services.Repositories
 
             if (paymentConfig != null)
             {
-                model.MerchantRef = paymentConfig.ReferencePrefix + model.CustomerId; // To be changed
+                model.MerchantRef = paymentConfig.ReferencePrefix + model.ProductCode; // To be changed
                 model.ReturnUrl = paymentConfig.PaymentHookUrl;
                 model.IntegrationKey = paymentConfig.IntegrationKey;
-
-
 
 
                 IPaymentManagement payment = PaymentFactory.GetPaymentProcessor(processorType);

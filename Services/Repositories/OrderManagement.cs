@@ -194,7 +194,9 @@ namespace eTranscript.Services.Repositories
 
                     response.Message = "Order already exists";
                     response.Code = 200;
-                    response.Data = existingOrder;
+
+                    var oldOrder = await GetOrderByNumberAsync(existingOrder.OrderNumber);
+                    response.Data = oldOrder;
                     orderNumber = existingOrder.OrderNumber;
 
 
@@ -268,6 +270,10 @@ namespace eTranscript.Services.Repositories
 
                     response.Message = "OrderDetail already exists";
                     response.Code = 200;
+
+                 
+
+
                     response.Data = existingOrderDetail;
 
                     // Update the order Details
