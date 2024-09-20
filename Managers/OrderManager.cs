@@ -68,5 +68,11 @@ namespace eTranscript.Managers
             var resp = await _order.DeleteOrderAsync(OrderNumber);
             return resp;
         }
+
+        public async Task<Response> GetAllOrderAsync()
+        {
+            var resp = await _order.GetAllOrderAsync();
+            return resp;
+        }
     }
 }

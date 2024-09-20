@@ -620,6 +620,40 @@ namespace eTranscript.Services.Repositories
             return response;
         }
 
+        public async Task<Response> GetAllOrderAsync()
+        {
+          
+            Response response = new Response();   
+            try
+            {
+                var allOrders = await _context.Order.ToListAsync();
+
+                response.Message = "Successful";
+                response.Code = 200;    
+                response.Data= allOrders;   
+
+                return response;
+            }
+            catch(DbUpdateException dbex)
+            {
+                response.Message= dbex.Message;
+                response.Code = 500;
+                response.Data= dbex.Data;   
+
+                return response;    
+            }
+            catch(Exception ex)
+            {
+                response.Message = ex.Message; 
+                response.Code = 500;
+                response.Data = ex.Message;
+
+                return response;    
+            }
+
+           
+        }
+
         //public Task<Response> ProceedToPaymentAsync(string orderNumber)
         //{
         //    throw new NotImplementedException();

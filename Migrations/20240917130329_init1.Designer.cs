@@ -11,8 +11,8 @@ using eTranscript.Data;
 namespace eTranscript.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240916165357_origin")]
-    partial class origin
+    [Migration("20240917130329_init1")]
+    partial class init1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

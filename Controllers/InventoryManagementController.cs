@@ -54,7 +54,7 @@ namespace eTranscript.Controllers
 
         [HttpPost]
         [Route("CreateCommodity")]
-        public async Task<IActionResult> CreateCommodityAsync([FromQuery] Commodity model)
+        public async Task<IActionResult> CreateCommodityAsync([FromBody] Commodity model)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace eTranscript.Controllers
         }
         [HttpPost]
         [Route("CreateShipment")]
-        public async Task<IActionResult> CreateShipmentAsync([FromQuery] Shipment model)
+        public async Task<IActionResult> CreateShipmentAsync([FromBody] Shipment model)
         {
             try
             {
@@ -291,7 +291,7 @@ namespace eTranscript.Controllers
         [HttpGet]
         [Route("GetShipmentById")]
 
-        public async Task<IActionResult> GetShipmentByIdAsync(int Id)
+        public async Task<IActionResult> GetShipmentByIdAsync([FromBody] int Id)
         {
             try
             {
@@ -325,7 +325,7 @@ namespace eTranscript.Controllers
         [HttpPut]
         [Route("UpdateCategory")]
 
-        public async Task<IActionResult> UpdateCategoryAsync(Category model, int Id)
+        public async Task<IActionResult> UpdateCategoryAsync([FromBody] Category model, int Id)
         {
             try
             {
@@ -359,7 +359,7 @@ namespace eTranscript.Controllers
         [HttpPut]
         [Route("UpdateCommodity")]
 
-        public async Task<IActionResult> UpdateCommodityAsync(Commodity model, int Id)
+        public async Task<IActionResult> UpdateCommodityAsync([FromBody] Commodity model, int Id)
         {
             try
             {
@@ -392,7 +392,7 @@ namespace eTranscript.Controllers
 
         [HttpPut]
         [Route("UpdateShipment")]
-        public async Task<IActionResult> UpdateShipmentAsync(Shipment model, int Id)
+        public async Task<IActionResult> UpdateShipmentAsync([FromBody] Shipment model, int Id)
         {
             try
             {
@@ -426,7 +426,7 @@ namespace eTranscript.Controllers
         [HttpDelete]
         [Route("DeleteCategory")]
 
-        public async Task<IActionResult> DeleteCategoryAsync(int Id)
+        public async Task<IActionResult> DeleteCategoryAsync([FromBody] int Id)
         {
             try
             {
@@ -460,7 +460,7 @@ namespace eTranscript.Controllers
         [HttpDelete]
         [Route("DeleteCommodity")]
 
-        public async Task<IActionResult> DeleteCommodityAsync(int Id)
+        public async Task<IActionResult> DeleteCommodityAsync([FromBody] int Id)
         {
             try
             {
@@ -494,7 +494,7 @@ namespace eTranscript.Controllers
         [HttpDelete]
         [Route("DeleteShipment")]
 
-        public async Task<IActionResult> DeleteShipmentAsync(int Id)
+        public async Task<IActionResult> DeleteShipmentAsync([FromBody] int Id)
         {
             try
             {

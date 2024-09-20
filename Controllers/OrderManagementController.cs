@@ -21,8 +21,8 @@ namespace eTranscript.Controllers
         [Route("CreateOrder")]
         public async Task<Response> CreateOrderAsync(string customerId, [FromBody] CommodityDto model)
         {
-           
-            var res = await _orderManager.CreateOrderAsync(customerId, model );
+
+            var res = await _orderManager.CreateOrderAsync(customerId, model);
 
             return res;
         }
@@ -42,12 +42,12 @@ namespace eTranscript.Controllers
         [Route("AddShipmentToOrderDetails")]
         public async Task<Response> AddShipmentToOrderDetailAsync(string OrderNumber, [FromBody] List<ShipmentDto> model)
         {
-            
-                var res = await _orderManager.AddShipmentToOrderDetailAsync(OrderNumber, model);
 
-                return res;
- 
-             
+            var res = await _orderManager.AddShipmentToOrderDetailAsync(OrderNumber, model);
+
+            return res;
+
+
         }
 
 
@@ -101,10 +101,18 @@ namespace eTranscript.Controllers
         }
 
         [HttpDelete]
-        [Route ("DeleteOrder")]
-        public async Task<Response> DeleteOrderAsync(string OrderNumber)
+        [Route("DeleteOrder")]
+        public async Task<Response> DeleteOrderAsync([FromBody] string OrderNumber)
         {
             var resp = await _orderManager.DeleteOrderAsync(OrderNumber);
+            return resp;
+        }
+
+        [HttpGet]
+        [Route("GetAllOrder")]
+        public async Task<Response> GetAllOrderAsync()
+        {
+            var resp = await _orderManager.GetAllOrderAsync();
             return resp;
         }
     }

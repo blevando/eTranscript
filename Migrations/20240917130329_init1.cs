@@ -4,7 +4,7 @@
 
 namespace eTranscript.Migrations
 {
-    public partial class origin : Migration
+    public partial class init1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
