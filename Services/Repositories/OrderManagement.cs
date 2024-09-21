@@ -193,7 +193,7 @@ namespace eTranscript.Services.Repositories
                 {
 
                     response.Message = "Order already exists";
-                    response.Code = 200;
+                    response.Code = 205;
 
                     var oldOrder = await GetOrderByNumberAsync(existingOrder.OrderNumber);
                     response.Data = oldOrder;
@@ -271,7 +271,7 @@ namespace eTranscript.Services.Repositories
                     response.Message = "OrderDetail already exists";
                     response.Code = 200;
 
-                 
+
 
 
                     response.Data = existingOrderDetail;
@@ -475,7 +475,7 @@ namespace eTranscript.Services.Repositories
                 // Then copy the order attributes into the consolidated object
                 ConsolidatedOrderDto consolidated = new ConsolidatedOrderDto();
 
-               
+
                 consolidated.CustomerName = orderNumber;
                 consolidated.CustomerId = orderNumber;
 
@@ -483,9 +483,9 @@ namespace eTranscript.Services.Repositories
                 consolidated.PaymentMethod = orderToRetrieve.PaymentMethod;
                 consolidated.PaymentReference = orderToRetrieve.PaymentReference;
                 consolidated.PaymentGateway = orderToRetrieve.PaymentGateway;
-                
 
-                consolidated.InvoiceDto = new InvoiceDto ();
+
+                consolidated.InvoiceDto = new InvoiceDto();
                 consolidated.DocumentDto = new DocumentDto();
                 consolidated.ShipmentDto = new List<ShipmentDto>();
 
@@ -501,7 +501,7 @@ namespace eTranscript.Services.Repositories
                             case OrderItemType.Document:
                                 consolidated.DocumentDto.Price = orderDetail.Price;
                                 consolidated.DocumentDto.Item = orderDetail.Item;
-                                 consolidated.DocumentDto.Address = orderDetail.Address;
+                                consolidated.DocumentDto.Address = orderDetail.Address;
 
                                 break;
 
@@ -523,7 +523,7 @@ namespace eTranscript.Services.Repositories
 
                 // Add invoice here
 
-                    var invoices = await _context.Invoice.FirstOrDefaultAsync(p => p.OrderNumber == orderNumber);
+                var invoices = await _context.Invoice.FirstOrDefaultAsync(p => p.OrderNumber == orderNumber);
 
                 if (invoices != null)
                 {
@@ -537,10 +537,10 @@ namespace eTranscript.Services.Repositories
                     consolidated.InvoiceDto.TotalAmount = invoices.TotalAmount;
 
                 }
-              
+
 
                 response.Message = "Success";
-                 response.Code = 200;
+                response.Code = 200;
                 response.Data = consolidated;
 
 
@@ -598,7 +598,7 @@ namespace eTranscript.Services.Repositories
 
                 //2. Delete the OrderDetail
 
-                var orderdetailToRemove =  await _context.OrderDetail.Where(p => p.OrderNumber == OrderNumber).ToListAsync();
+                var orderdetailToRemove = await _context.OrderDetail.Where(p => p.OrderNumber == OrderNumber).ToListAsync();
                 if (orderdetailToRemove != null)
                 {
                     _context.OrderDetail.RemoveRange(orderdetailToRemove);
@@ -628,36 +628,76 @@ namespace eTranscript.Services.Repositories
 
         public async Task<Response> GetAllOrderAsync()
         {
-          
-            Response response = new Response();   
+
+            Response response = new Response();
             try
             {
                 var allOrders = await _context.Order.ToListAsync();
 
                 response.Message = "Successful";
-                response.Code = 200;    
-                response.Data= allOrders;   
+                response.Code = 200;
+                response.Data = allOrders;
 
                 return response;
             }
-            catch(DbUpdateException dbex)
+            catch (DbUpdateException dbex)
             {
-                response.Message= dbex.Message;
+                response.Message = dbex.Message;
                 response.Code = 500;
-                response.Data= dbex.Data;   
+                response.Data = dbex.Data;
 
-                return response;    
+                return response;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                response.Message = ex.Message; 
+                response.Message = ex.Message;
                 response.Code = 500;
                 response.Data = ex.Message;
 
-                return response;    
+                return response;
             }
 
-           
+
+        }
+        public async Task<Response> GetInvoiceByOrderNumberAsync(string OrderNumber)
+        {
+            Response response = new Response();
+            try
+            {
+                var existingInvoice = await _context.Invoice.FirstOrDefaultAsync(c => c.OrderNumber == OrderNumber);
+                if (existingInvoice != null)
+                {
+                    response.Message = "Successful";
+                    response.Code = 200;
+                    response.Data = existingInvoice;
+
+                    return response;
+                }
+                else
+                {
+                    response.Message = "Invoice not found";
+                    response.Code = 404;
+                    response.Data = null;
+
+                    return response;
+                }
+            }
+            catch (DbUpdateException dbex)
+            {
+                response.Message = $"Error:{dbex.Message}";
+                response.Code = 500;
+                response.Data = null;
+
+                return response;
+            }
+            catch(Exception ex)
+            {
+                response.Message = $"Error:{ex.Message}";
+                response.Code = 500;
+                response.Data = null;
+
+                return response;    
+            }
         }
 
         //public Task<Response> ProceedToPaymentAsync(string orderNumber)

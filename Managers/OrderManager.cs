@@ -74,5 +74,10 @@ namespace eTranscript.Managers
             var resp = await _order.GetAllOrderAsync();
             return resp;
         }
+        public async Task<Response> GetInvoiceByOrderNumberAsync(string OrderNumber)
+        {
+            var resp = await _order.GetInvoiceByOrderNumberAsync(OrderNumber); 
+            return resp;
+        }
     }
 }

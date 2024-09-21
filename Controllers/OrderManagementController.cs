@@ -115,5 +115,13 @@ namespace eTranscript.Controllers
             var resp = await _orderManager.GetAllOrderAsync();
             return resp;
         }
+        [HttpGet]
+        [Route("GetInvoiceByOrderNumber")]
+        public async Task<Response> GetInvoiceByOrderNumberAsync([FromQuery] string OrderNumber)
+        {
+            var resp = await _orderManager.GetInvoiceByOrderNumberAsync(OrderNumber);
+            return resp;    
+        }
+
     }
 }

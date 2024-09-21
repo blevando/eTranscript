@@ -33,6 +33,7 @@ namespace eTranscript.Services.Interfaces
         Task<Response> DeleteOrderAsync(string OrderNumber);
         Task<Response> GetOrderByNumberAsync(string orderNumber);
         Task<Response> GetAllOrderAsync();
+        Task<Response> GetInvoiceByOrderNumberAsync(string orderNumber);
 
         // Task<Response> ProceedToPaymentAsync(string orderNumber);
 
