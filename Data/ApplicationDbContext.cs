@@ -21,6 +21,7 @@ namespace eTranscript.Data
         public DbSet<Receipt> Receipt { get; set; }
         public DbSet<PaymentGatewayConfig> PaymentGatewayConfig { get; set; }
         public DbSet<SplitConfig> SplitConfig { get; set; }
+        public DbSet<User>  User { get; set; }
 
     }
 }
